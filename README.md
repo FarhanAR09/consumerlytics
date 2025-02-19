@@ -1,5 +1,6 @@
 # Consumerlytics
 Analyze your Market!
+[Consumerlytics GitHub Pages](https://farhanar09.github.io/consumerlytics/)
 
 # Kelompok Info Cuan
 - Ketua Kelompok: Farhan Arief Ramadhan - 22/497297/TK/54496
