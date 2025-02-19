@@ -21,11 +21,11 @@ Pengembangan infrastruktur AI di masa ini didukung oleh banyaknya data pasar yan
 * AI dapat digunakan untuk analisis pasar karena data yang luas dan real-time.
 # Ide Solusi
 Pengembangan platform analisis keuangan UMKM berbasis AI untuk memberikan saran yang bergantung pada keuangan internal perusahaan dan tren pasar target perusahaan.
-| Fitur | Keterangan |
-| ----------- | ----------- |
-| Input data produk dan inventaris | Data mencakup kebutuhan produksi, distribusi, penjualan, dan jumlah yang tersedia untuk dijual. |
-| Input data keuangan | Pengelolaan keuangan yang mencatat pemasukan dan pengeluaran secara manual. |
-| Saran keputusan usaha oleh AI | AI akan memperhitungkan bagaimana produk harus dijual berdasarkan keadaan internal perusahaan (inventaris dan keuangan) dan keadaan serta tren pasar. |
+| Fitur                            | Keterangan                                                                                                                                            |
+|----------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Input data produk dan inventaris | Data mencakup kebutuhan produksi, distribusi, penjualan, dan jumlah yang tersedia untuk dijual.                                                       |
+| Input data keuangan              | Pengelolaan keuangan yang mencatat pemasukan dan pengeluaran secara manual.                                                                           |
+| Saran keputusan usaha oleh AI    | AI akan memperhitungkan bagaimana produk harus dijual berdasarkan keadaan internal perusahaan (inventaris dan keuangan) dan keadaan serta tren pasar. |
 # Analisis Kompetitor
 
 # Daftar Pustaka
