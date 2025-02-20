@@ -85,6 +85,14 @@ Pengembangan platform analisis keuangan UMKM berbasis AI untuk memberikan saran 
 ---
 
 ---
+
+# Cloud Architecture
+
+<img src="assets/cloudArchitecture.png"/>
+
+---
+
+---
 # Daftar Pustaka
 
 * Sofyan, S. (2017, Juni) PERAN UMKM (USAHA MIKRO, KECIL, DAN MENENGAH) DALAM PEREKONOMIAN INDONESIA. Diakses pada 15 Februari 2025 dari https://jurnal.uindatokarama.ac.id/index.php/blc/article/download/298/216
