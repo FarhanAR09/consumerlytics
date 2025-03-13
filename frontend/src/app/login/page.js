@@ -32,7 +32,7 @@ export default function LoginPage() {
                 <InputField type="password" value={username} onChange={(p)=>{password=p}} placeholder="Enter your password"></InputField>
             </div>
             <div className="h-16"></div>
-            <Button w={180} text="Login" onClick={()=>{router.push("/register")}}></Button>
+            <Button w={180} text="Login" onClick={()=>{handleLogin(username, password)}}></Button>
             <div className="flex flex-row items-center justify-center gap-2">
                 <p className="text-black">Don't have an account?</p>
                 <p className="text-[#5325FB]" onClick={()=>{router.push("/register")}}>Register</p>
