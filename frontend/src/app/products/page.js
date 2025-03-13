@@ -4,6 +4,8 @@ import { useRouter } from "next/navigation";
 import Product from '@/classes/product';
 import ProductCard from '@/components/cards/productCard';
 import { useState } from 'react';
+import { logout } from '@/lib/authAPI';
+import Spinner from '@/components/spinner';
 
 export default function ProductsPage() {
     
@@ -47,17 +49,33 @@ export default function ProductsPage() {
         setAnalysisPopupActive(true);
     };
 
+    const [isLoggingOut, setIsLoggingOut] = useState(false);
+    async function handleLogout(){
+        setIsLoggingOut(true);
+        try{
+            await logout();
+            router.push("/");
+        }
+        catch(e){
+            alert(e);
+        }
+        finally{
+            setIsLoggingOut(false);
+        }
+    }
+
   return (
     <div className="h-screen w-screen flex flex-col bg-gradient-to-l from-[#83C3EC] to-[#306AFF]">
-        {/* Logo + Logout */}
+        {/* Logo */}
         <div className="absolute top-0 left-0 p-4 flex items-center gap-4">
             <img src="/globe.svg" alt="Sample" className="w-16 h-16"/>
             <div className="flex flex-col">
                 <p className="text-[16px] font-semibold text-black">Consumerlytics</p>
             </div>
         </div>
+        {/* Logout */}
         <div className="absolute top-0 right-0 p-4 flex items-center">
-            <Button onClick={()=>{router.push("/")}} text="Logout" w={100}></Button>
+            {isLoggingOut ? <Spinner/> : <Button onClick={()=>{handleLogout();}} text="Logout" w={100}></Button>}
         </div>
         {/* Content */}
         <div className="flex flex-1 flex-col w-full p-32 overflow-y-scroll">

@@ -2,22 +2,36 @@
 import Button from '@/components/button';
 import InputField from '@/components/inputField';
 import { useRouter } from "next/navigation";
+import { register } from '@/lib/authAPI';
+import { useState } from 'react';
+import Spinner from '@/components/spinner';
 
 export default function RegisterPage() {
 
     const router = useRouter();
 
-    let username = "";
-    let password = "";
-    let confirmPassword = "";
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
 
-    const handleRegister = (username, password, confirmPassword) => {
-        //TODO: implement register
-        if (password !== confirmPassword) {
-            alert("Password doesn't match");
-        }
-        else {
+    async function handleRegister(username, password, confirmPassword){
+
+        setIsLoading(true);
+        try {
+            console.log(username, password, confirmPassword);
+            if (password != confirmPassword) {
+                throw new Error("Password and confirm password do not match");
+            }
+
+            await register(username, password, confirmPassword);
             router.push("/products");
+        }
+        catch (e) {
+            alert(e);
+        }
+        finally {
+            setIsLoading(false);
         }
     }
 
@@ -31,18 +45,18 @@ export default function RegisterPage() {
             <img width={64} height={64} src="globe.svg"></img>
             <div className="flex flex-col gap-2">
                 <p className="text-black">Username</p>
-                <InputField value={username} onChange={(u)=>{username=u}} placeholder="Enter your username"></InputField>
+                <InputField value={username} onChange={(u)=>{setUsername(u)}} placeholder="Enter your username"></InputField>
             </div>
             <div className="flex flex-col gap-2">
                 <p className="text-black">Password</p>
-                <InputField type="password" value={username} onChange={(p)=>{password=p}} placeholder="Enter your password"></InputField>
+                <InputField type="password" value={username} onChange={(p)=>{setPassword(p)}} placeholder="Enter your password"></InputField>
             </div>
             <div className="flex flex-col gap-2">
                 <p className="text-black">Confirm Password</p>
-                <InputField type="password" value={username} onChange={(p)=>{confirmPassword=p}} placeholder="Enter the same password"></InputField>
+                <InputField type="password" value={username} onChange={(p)=>{setConfirmPassword(p)}} placeholder="Enter the same password"></InputField>
             </div>
             <div className="h-16"></div>
-            <Button w={180} text="Register" onClick={()=>{handleRegister(username, password, confirmPassword)}}></Button>
+            { isLoading ? <Spinner/> : <Button w={180} text="Register" onClick={()=>{handleRegister(username, password, confirmPassword)}}></Button>}
             <div className="flex flex-row items-center justify-center gap-2">
                 <p className="text-black">Already have an account?</p>
                 <p className="text-[#5325FB]" onClick={()=>{router.push("/login")}}>Login</p>
