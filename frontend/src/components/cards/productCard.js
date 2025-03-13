@@ -3,7 +3,9 @@ import Button from "../button";
 import Product from "@/classes/product";
 import { v4 as uuidv4 } from 'uuid';
 
-export default function ProductCard({ onProductSaved=(_)=>{}, onProductDeleted = (_) => {}, initProduct = new Product(), initState="show" }) {
+export default function ProductCard({ onProductSaved=(_)=>{}, onProductDeleted = (_) => {}, onAnalyzeProduct = (_)=>{}, initProduct = new Product(), initState="show" }) {
+
+    //TODO: implement CRUD with API
 
     const State = {
         NEW: "new",
@@ -91,7 +93,7 @@ export default function ProductCard({ onProductSaved=(_)=>{}, onProductDeleted =
                 <div className="flex flex-row items-start justify-center gap-2">
                     <Button text="Delete" onClick={() => {deleteProduct();}} variant="bright" w={100}/>
                     <Button text="Edit" onClick={() => {setState(State.EDIT);}} variant="bright" w={100}/>
-                    <Button text="Analyze" onClick={() => {}} variant="primary" w={100}/>
+                    <Button text="Analyze" onClick={() => {onAnalyzeProduct();}} variant="primary" w={100}/>
                 </div>
             }
             {state === State.EDIT &&

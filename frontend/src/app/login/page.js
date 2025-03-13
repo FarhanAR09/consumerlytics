@@ -10,6 +10,11 @@ export default function LoginPage() {
     let username = "";
     let password = "";
 
+    const handleLogin = (username, password) => {
+        //TODO: implement login
+        router.push("/products");
+    }
+
   return (
     <div className="h-screen w-screen flex flex-row bg-gradient-to-l from-[#83C3EC] to-[#306AFF]">
         <div className="flex-1 h-full">
@@ -27,7 +32,7 @@ export default function LoginPage() {
                 <InputField type="password" value={username} onChange={(p)=>{password=p}} placeholder="Enter your password"></InputField>
             </div>
             <div className="h-16"></div>
-            <Button w={180} text="Login" onClick={()=>{}}></Button>
+            <Button w={180} text="Login" onClick={()=>{router.push("/register")}}></Button>
             <div className="flex flex-row items-center justify-center gap-2">
                 <p className="text-black">Don't have an account?</p>
                 <p className="text-[#5325FB]" onClick={()=>{router.push("/register")}}>Register</p>

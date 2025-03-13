@@ -11,9 +11,13 @@ export default function RegisterPage() {
     let password = "";
     let confirmPassword = "";
 
-    function handleRegister(password, confirmPassword) {
+    const handleRegister = (username, password, confirmPassword) => {
+        //TODO: implement register
         if (password !== confirmPassword) {
             alert("Password doesn't match");
+        }
+        else {
+            router.push("/products");
         }
     }
 
@@ -38,7 +42,7 @@ export default function RegisterPage() {
                 <InputField type="password" value={username} onChange={(p)=>{confirmPassword=p}} placeholder="Enter the same password"></InputField>
             </div>
             <div className="h-16"></div>
-            <Button w={180} text="Register" onClick={()=>{handleRegister(password, confirmPassword)}}></Button>
+            <Button w={180} text="Register" onClick={()=>{handleRegister(username, password, confirmPassword)}}></Button>
             <div className="flex flex-row items-center justify-center gap-2">
                 <p className="text-black">Already have an account?</p>
                 <p className="text-[#5325FB]" onClick={()=>{router.push("/login")}}>Login</p>
