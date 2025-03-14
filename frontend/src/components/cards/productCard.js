@@ -1,9 +1,12 @@
 import { useState } from "react";
 import Button from "../button";
-import Product from "@/classes/product";
+import {Product} from "@/classes/product";
 import { v4 as uuidv4 } from 'uuid';
+import { checkProductExists, generateID } from "@/lib/productAPI";
+import Spinner from '@/components/spinner';
+import { createNewProduct, updateProduct, deleteProduct as deleteProductAPI } from "@/lib/productAPI";
 
-export default function ProductCard({ onProductSaved=(_)=>{}, onProductDeleted = (_) => {}, onAnalyzeProduct = (_)=>{}, initProduct = new Product(), initState="show" }) {
+export default function ProductCard({ onProductSaved=(_1, _2)=>{}, onProductDeleted = (_) => {}, onAnalyzeProduct = (_)=>{}, initProduct = new Product(), initState="show" }) {
 
     //TODO: implement CRUD with API
 
@@ -32,22 +35,55 @@ export default function ProductCard({ onProductSaved=(_)=>{}, onProductDeleted =
         return "Rp." + new Intl.NumberFormat("id-ID").format(num);
     };
 
-    function addProduct(){
-        const generatedID = uuidv4();
-        //TODO: check if id already exists in database
-        product.id = generatedID;
-        saveProduct();
+    const [isAdding, setIsAdding] = useState(false);
+    async function addProduct(){
+        setIsAdding(true);
+        try {
+            product.id = "";
+            product.name = nameInput;
+            product.cost = costInput;
+            setProduct(product);
+
+            await createNewProduct(product);
+
+            onProductSaved(product, "");
+        }
+        catch (e){
+            return {ok: false, error: e};
+        }
+        finally{
+            setIsAdding(false);
+        }
+
+        return {ok: true};
     }
 
-    function saveProduct(){
+    //TODO: update async handling
+    async function saveProduct(){
         product.name = nameInput;
         product.cost = costInput;
         setProduct(product);
+
+        await updateProduct(product);
+
         onProductSaved(product);
     }
 
-    function deleteProduct(){
-        onProductDeleted(product);
+    const [isDeleting, setIsDeleting] = useState(false);
+    async function deleteProduct(){
+        setIsDeleting(true);
+        try {
+            if (product.id && product.id !== null && product.id !== ""){
+                await deleteProductAPI(product.id);
+            }
+            onProductDeleted(product);
+        }
+        catch (e){
+            alert(e);
+        }
+        finally{
+            setIsDeleting(false);
+        }
     }
 
     return (
@@ -85,15 +121,27 @@ export default function ProductCard({ onProductSaved=(_)=>{}, onProductDeleted =
             />
             {state === State.NEW &&
                 <div className="flex flex-row items-start justify-center gap-2">
-                    <Button text="Cancel" onClick={() => {deleteProduct();}} variant="bright" w={100}/>
-                    <Button text="Add" onClick={() => {addProduct(); setState(State.SHOW);}} variant="bright" w={100}/>
+                    {isAdding && <Spinner/>}
+                    {!isAdding && <Button text="Cancel" onClick={() => {deleteProduct();}} variant="bright" w={100}/>}
+                    {!isAdding && <Button text="Add" onClick={
+                        async () => {
+                            const result = await addProduct();
+                            if (result.ok){
+                                setState(State.SHOW);
+                            }
+                            else if (result.error){
+                                alert(result.error);
+                            }
+                        }}
+                    variant="bright" w={100}/>}
                 </div>
             }
             {state === State.SHOW &&
                 <div className="flex flex-row items-start justify-center gap-2">
-                    <Button text="Delete" onClick={() => {deleteProduct();}} variant="bright" w={100}/>
-                    <Button text="Edit" onClick={() => {setState(State.EDIT);}} variant="bright" w={100}/>
-                    <Button text="Analyze" onClick={() => {onAnalyzeProduct();}} variant="primary" w={100}/>
+                    {isDeleting && <Spinner/>}
+                    {!isDeleting && <Button text="Delete" onClick={async () => {deleteProduct();}} variant="bright" w={100}/>}
+                    {!isDeleting && <Button text="Edit" onClick={() => {setState(State.EDIT);}} variant="bright" w={100}/>}
+                    {!isDeleting && <Button text="Analyze" onClick={() => {onAnalyzeProduct();}} variant="primary" w={100}/>}
                 </div>
             }
             {state === State.EDIT &&

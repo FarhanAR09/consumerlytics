@@ -1,43 +1,77 @@
 "use client";
 import Button from '@/components/button';
 import { useRouter } from "next/navigation";
-import Product from '@/classes/product';
+import {Product} from '@/classes/product';
 import ProductCard from '@/components/cards/productCard';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { logout } from '@/lib/authAPI';
 import Spinner from '@/components/spinner';
+import { getProducts } from '@/lib/productAPI';
 
 export default function ProductsPage() {
     
     //TODO: throw user to login page if not logged in
-
     const router = useRouter();
 
     //TODO: sync products with database
-    const [products, setProducts] = useState([
-        new Product("p1", "Product 1", 1000),
-        new Product("p2", "Product 2", 2000),
-    ]);
+    const [products, setProductsList] = useState([]);
+
+    const fetchProducts = async () => {
+        setIsFetchingProducts(true);
+        try {
+            const products = await getProducts();
+            setProductsList(products);
+            console.log(products);
+        } catch (error) {
+            console.error("Failed to fetch products", error);
+            alert("Failed to fetch products: " + error);
+        } finally {
+            setIsFetchingProducts(false);
+        }
+    };
+
+    const syncProducts = () => {
+        setProductsList([]);
+        fetchProducts();
+    };
+
+    const [isFetchingProduct, setIsFetchingProducts] = useState(false);
+    useEffect(() => {
+        syncProducts();
+    }, []);
 
     const [analysisPopupActive, setAnalysisPopupActive] = useState(false);
     const [fullAnalysisPopupActive, setFullAnalysisPopupActive] = useState(false);
 
-    const handleProductUpdated = (updatedProduct) => {
-        setProducts((prevProducts) =>
-            prevProducts.map((p) => (p.id === updatedProduct.id ? updatedProduct : p))
-        );
+    const handleProductUpdated = (updatedProduct, oldID = undefined) => {
+        //New product
+        if (oldID == undefined){
+            setProductsList((prevProducts) =>
+                prevProducts.map((p) => (p.id === updatedProduct.id ? updatedProduct : p))
+            );
+        }
+        //Existing product
+        else {
+            setProductsList((prevProducts) =>
+                prevProducts
+                    .filter((p) => p.id !== oldID)
+                    .concat(updatedProduct)
+            );   
+        }
+        syncProducts();
     };
 
     const handleProductDeleted = (deletedProduct) => {
-        setProducts((prevProducts) =>
+        setProductsList((prevProducts) =>
             prevProducts.filter((p) => p.id !== deletedProduct.id)
         );
+        syncProducts();
     };
 
-    const createNewProduct = () => {
+    const createNewEmptyProduct = () => {
         const hasEmptyId = products.some((product) => isIDEmpty(product));
         if (!hasEmptyId) {
-            setProducts((prevProducts) => [...prevProducts, new Product()]);
+            setProductsList((prevProducts) => [...prevProducts, new Product()]);
         }
     };
 
@@ -80,6 +114,13 @@ export default function ProductsPage() {
         {/* Content */}
         <div className="flex flex-1 flex-col w-full p-32 overflow-y-scroll">
             <div className="grid grid-cols-2 gap-8 w-fit">
+                { isFetchingProduct &&
+                    <div className="flex flex-row items-center justify-center">
+                        <Spinner/>
+                        <p className="text-black text-[20px] ml-4">
+                            Fetching products...
+                        </p>
+                    </div>}
                 {
                     products.map((product)=>(
                         <ProductCard
@@ -92,11 +133,14 @@ export default function ProductsPage() {
                         ></ProductCard>
                     ))
                 }
-                <div className="bg-[#25437c] rounded-md w-12 h-12 items-center justify-center flex" onClick={()=>{createNewProduct()}}>
-                    <p className="text-black text-[40px]">
-                        +
-                    </p>
-                </div>
+                {
+                    !isFetchingProduct &&
+                    <div className="bg-[#25437c] rounded-md w-12 h-12 items-center justify-center flex" onClick={()=>{createNewEmptyProduct()}}>
+                        <p className="text-black text-[40px]">
+                            +
+                        </p>
+                    </div>
+                }
             </div>
         </div>
         {/* Popups */}
