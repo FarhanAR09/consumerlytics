@@ -6,8 +6,6 @@ const users = [
 ];
 
 const generateToken = (res, username) => {
-
-    console.log("Username before signing:", username); // Debugging output
     const token = jwt.sign({ username: username }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN });
 
     res.cookie("jwt", token, {

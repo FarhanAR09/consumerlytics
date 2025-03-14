@@ -105,7 +105,7 @@ const deleteProduct = async (req, res) => {
     try {
         await delay(1000);
 
-        const { id } = req.body;
+        const id = req.params.id;
 
         const productIndex = products.findIndex(product => product.id === id && req.user.username === product.owner);
         if (productIndex === -1) {
@@ -120,11 +120,33 @@ const deleteProduct = async (req, res) => {
     }
 };
 
+const analyze = async (req, res) => {
+    
+    try{
+        const id = req.params.id;
+
+        await delay(1000);
+        const product = products.find(product => product.id === id && req.user.username === product.owner);
+        
+        if (product === undefined || product === null) {
+            res.status(404).json({ message: "Product not found" });
+        }
+        else{
+            res.status(200).json({
+                analysis: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris neque mauris, auctor vel tristique nec, feugiat sed ipsum. Vivamus faucibus justo tortor, quis venenatis nulla feugiat nec. Praesent tristique enim at felis vehicula, ut blandit libero finibus. Nullam ac cursus leo, semper sagittis sem. Aliquam iaculis egestas eros ac malesuada. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Curabitur sed ex sed purus pretium vulputate quis et est. Mauris dignissim mollis nisl. Sed viverra enim vel gravida tincidunt. Integer nec risus quis tellus varius luctus.",
+            });
+        }
+    }
+    catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
 
 module.exports = {
     getUserProducts,
     getProductByID,
     createNewProduct,
     updateProduct,
-    deleteProduct
+    deleteProduct,
+    analyze
 };
