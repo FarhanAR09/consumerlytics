@@ -59,14 +59,27 @@ export default function ProductCard({ onProductSaved=(_1, _2)=>{}, onProductDele
     }
 
     //TODO: update async handling
+    const [isUpdating, setIsUpdating] = useState(false);
     async function saveProduct(){
-        product.name = nameInput;
-        product.cost = costInput;
-        setProduct(product);
-
-        await updateProduct(product);
-
-        onProductSaved(product);
+        setIsUpdating(true);
+        try{
+            product.name = nameInput;
+            product.cost = costInput;
+            setProduct(product);
+    
+            await updateProduct(product);
+    
+            onProductSaved(product);
+        }
+        catch (e){
+            console.error(e);
+            alert(e);
+            return {ok: false, error: e};
+        }
+        finally{
+            setIsUpdating(false);
+        }
+        return {ok: true};
     }
 
     const [isDeleting, setIsDeleting] = useState(false);
@@ -146,8 +159,14 @@ export default function ProductCard({ onProductSaved=(_1, _2)=>{}, onProductDele
             }
             {state === State.EDIT &&
                 <div className="flex flex-row items-start justify-center gap-2">
-                    <Button text="Cancel" onClick={() => {setState(State.SHOW);}} variant="bright" w={100}/>
-                    <Button text="Save" onClick={() => {saveProduct(); setState(State.SHOW);}} variant="bright" w={100}/>
+                    {isUpdating && <Spinner/>}
+                    {!isUpdating && <Button text="Cancel" onClick={() => {setState(State.SHOW);}} variant="bright" w={100}/>}
+                    {!isUpdating && <Button text="Save" onClick={async () => {
+                        const result = await saveProduct();
+                        if (result.ok){
+                            setState(State.SHOW);
+                        }
+                    }} variant="bright" w={100}/>}
                 </div>
             }
         </div>
