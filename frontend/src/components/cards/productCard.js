@@ -6,7 +6,7 @@ import { checkProductExists, generateID } from "@/lib/productAPI";
 import Spinner from '@/components/spinner';
 import { createNewProduct, updateProduct, deleteProduct as deleteProductAPI } from "@/lib/productAPI";
 
-export default function ProductCard({ onProductSaved=(_1, _2)=>{}, onProductDeleted = (_) => {}, onAnalyzeProduct = (_)=>{}, initProduct = new Product(), initState="show" }) {
+export default function ProductCard({ onProductSaved=(product, oldID)=>{}, onProductDeleted = (product) => {}, onAnalyzeProduct = (product)=>{}, initProduct = new Product(), initState="show" }) {
 
     //TODO: implement CRUD with API
 
@@ -58,7 +58,6 @@ export default function ProductCard({ onProductSaved=(_1, _2)=>{}, onProductDele
         return {ok: true};
     }
 
-    //TODO: update async handling
     const [isUpdating, setIsUpdating] = useState(false);
     async function saveProduct(){
         setIsUpdating(true);

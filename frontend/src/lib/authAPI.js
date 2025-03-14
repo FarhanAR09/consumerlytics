@@ -60,7 +60,7 @@ export async function register(username, password){
     );
 
     if (!res.ok) {
-        throw new Error("Login failed");
+        throw new Error("Register failed");
     }
 
     return res.json();
