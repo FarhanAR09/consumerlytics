@@ -1,14 +1,11 @@
 import { useState } from "react";
-import Button from "../button";
+import Button from "@/components/button";
 import {Product} from "@/classes/product";
-import { v4 as uuidv4 } from 'uuid';
-import { checkProductExists, generateID } from "@/lib/productAPI";
 import Spinner from '@/components/spinner';
 import { createNewProduct, updateProduct, deleteProduct as deleteProductAPI } from "@/lib/productAPI";
 
+//onProductSaved: oldID undefined means not changing ID, oldID empty string means saving new product with new id
 export default function ProductCard({ onProductSaved=(product, oldID)=>{}, onProductDeleted = (product) => {}, onAnalyzeProduct = (product)=>{}, initProduct = new Product(), initState="show" }) {
-
-    //TODO: implement CRUD with API
 
     const State = {
         NEW: "new",
@@ -44,9 +41,10 @@ export default function ProductCard({ onProductSaved=(product, oldID)=>{}, onPro
             product.cost = costInput;
             setProduct(product);
 
-            await createNewProduct(product);
+            const response = await createNewProduct(product);
+            const createdProduct = response.product;
 
-            onProductSaved(product, "");
+            onProductSaved(createdProduct, "");
         }
         catch (e){
             return {ok: false, error: e};
@@ -153,7 +151,7 @@ export default function ProductCard({ onProductSaved=(product, oldID)=>{}, onPro
                     {isDeleting && <Spinner/>}
                     {!isDeleting && <Button text="Delete" onClick={async () => {deleteProduct();}} variant="bright" w={100}/>}
                     {!isDeleting && <Button text="Edit" onClick={() => {setState(State.EDIT);}} variant="bright" w={100}/>}
-                    {!isDeleting && <Button text="Analyze" onClick={() => {onAnalyzeProduct();}} variant="primary" w={100}/>}
+                    {!isDeleting && <Button text="Analyze" onClick={() => {onAnalyzeProduct(product);}} variant="primary" w={100}/>}
                 </div>
             }
             {state === State.EDIT &&

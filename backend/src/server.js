@@ -10,7 +10,11 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({ origin: process.env.ORIGIN, credentials: true }));
+app.use(cors({
+    origin: process.env.ORIGIN,
+    credentials: true,
+    allowedHeaders: ["Content-Type"],
+}));
 
 app.use("/auth", authRoutes);
 app.use("/products", productRoutes);

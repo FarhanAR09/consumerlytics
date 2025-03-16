@@ -8,7 +8,7 @@ const productSchema = z.object({
     owner: z.string(),
 });
 
-const products = [
+const productsMockDB = [
     { id: "ADASDSADA", name: "Product 1", cost: 100000, owner: "123" },
     { id: "ADA231SDS", name: "Product 2", cost: 200000, owner: "123" },
     { id: "ADASDS321", name: "Product 3", cost: 300000, owner: "123" },
@@ -21,7 +21,7 @@ const getUserProducts = async (req, res) => {
     
     try{
         await delay(1000);
-        const userProducts = products.filter(product => product.owner === req.user.username);
+        const userProducts = productsMockDB.filter(product => product.owner === req.user.username);
 
         res.status(200).json(userProducts);
     }
@@ -34,7 +34,7 @@ const getProductByID = async (req, res) => {
     
     try{
         await delay(1000);
-        const product = products.find(product => product.id === req.params.id && req.user.username === product.owner);
+        const product = productsMockDB.find(product => product.id === req.params.id && req.user.username === product.owner);
         
         if (product === undefined || product === null) {
             res.status(404).json({ message: "Product not found" });
@@ -57,12 +57,12 @@ const createNewProduct = async (req, res) => {
         let newId;
         do {
             newId = uuidv4();
-        } while (products.some(product => product.id === newId));
+        } while (productsMockDB.some(product => product.id === newId));
 
         productSchema.parse(newProduct);
 
         newProduct = { ...newProduct, id: newId };
-        products.push(newProduct);
+        productsMockDB.push(newProduct);
 
         res.status(201).json({ message: "Product created successfully", product: newProduct });
     } catch (error) {
@@ -82,13 +82,13 @@ const updateProduct = async (req, res) => {
         productSchema.parse(updatedProduct);
         
         await delay(1000);
-        const productIndex = products.findIndex(product => product.id === id && req.user.username === product.owner);
+        const productIndex = productsMockDB.findIndex(product => product.id === id && req.user.username === product.owner);
         if (productIndex === -1) {
             res.status(404).json({ message: "Product not found" });
         }
         else{
-            products[productIndex] = { ...products[productIndex], ...updatedProduct };
-            res.status(200).json({ message: "Product updated successfully", product: products[productIndex] });
+            productsMockDB[productIndex] = { ...productsMockDB[productIndex], ...updatedProduct };
+            res.status(200).json({ message: "Product updated successfully", product: productsMockDB[productIndex] });
         }
     }
     catch (error) {
@@ -107,12 +107,12 @@ const deleteProduct = async (req, res) => {
 
         const id = req.params.id;
 
-        const productIndex = products.findIndex(product => product.id === id && req.user.username === product.owner);
+        const productIndex = productsMockDB.findIndex(product => product.id === id && req.user.username === product.owner);
         if (productIndex === -1) {
             res.status(404).json({ message: "Product not found" });
         }
         else{
-            const deletedProduct = products.splice(productIndex, 1)[0];
+            const deletedProduct = productsMockDB.splice(productIndex, 1)[0];
             res.status(200).json({ message: "Product deleted successfully" });
         }
     } catch (error) {
@@ -126,7 +126,7 @@ const analyze = async (req, res) => {
         const id = req.params.id;
 
         await delay(1000);
-        const product = products.find(product => product.id === id && req.user.username === product.owner);
+        const product = productsMockDB.find(product => product.id === id && req.user.username === product.owner);
         
         if (product === undefined || product === null) {
             res.status(404).json({ message: "Product not found" });
