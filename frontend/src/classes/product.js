@@ -15,11 +15,11 @@ export class Product {
 export const ProductFetchSchema = z.object({
     id: z.string().min(1),
     name: z.string().min(1).optional(),
-    cost: z.number().min(0).optional(),
+    cost: z.coerce.number().min(0).optional(),
 })
 
 export const ProductPostSchema = z.object({
     id: z.string().optional(),
     name: z.string().min(1).optional(),
-    cost: z.number().min(0).optional(),
+    cost: z.coerce.number().min(0).optional(),
 })

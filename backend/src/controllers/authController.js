@@ -1,9 +1,6 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-
-const users = [
-    {username: "123", password: "$2b$10$E66VYvMy76nI6d82pCWlYeyybZisrbQL63DLp1Nh5TNvfHVw5WLSW"} //password: asd
-];
+const pool = require("../config/db");
 
 const generateToken = (res, username) => {
     const token = jwt.sign({ username: username }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN });
@@ -19,12 +16,23 @@ const generateToken = (res, username) => {
 const register = async (req, res) => {
     const { username, password } = req.body;
     
-    if (!username || !password) return res.status(400).json({ message: "All fields are required" });
+    if (!username || !password) return res.status(400).json({ error: "All fields are required" });
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    
-    const user = { username, password: hashedPassword };
-    users.push(user);
+
+    let result;
+    try {
+        result = await pool.query(
+            `INSERT INTO public."User" (username, "passwordHash") VALUES ($1, $2) RETURNING username;`,
+            [username, hashedPassword]
+        );
+    }
+    catch (err){
+        if (err.code === "23505") {
+            return res.status(400).json({ error: "Username or already exists" });
+        }
+        return res.status(500).json({ error: err.message });
+    }
 
     generateToken(res, username);
     res.status(201).json({ message: "User registered", user: { username } });
@@ -32,12 +40,15 @@ const register = async (req, res) => {
 
 const login = async (req, res) => {
     const { username, password } = req.body;
-    
-    const user = users.find(u => u.username === username);
-    if (!user) return res.status(401).json({ message: "No username found" });
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(401).json({ message: "Invalid credentials" });
+    const result = await pool.query(`SELECT * FROM public."User" WHERE username = $1`, [username]);
+    if (result.rows.length === 0) {
+        return res.status(400).json({ error: "Invalid credentials" });
+    }
+
+    const isMatch = await bcrypt.compare(password, result.rows[0].passwordHash);
+    if (!isMatch)
+        return res.status(401).json({ error: "Invalid credentials" });
 
     generateToken(res, username);
     res.json({ message: "Login successful", user: { username } });
@@ -45,7 +56,7 @@ const login = async (req, res) => {
 
 const logout = (req, res) => {
     res.cookie("jwt", "", { httpOnly: true, expires: new Date(0) });
-    res.json({ message: "Logged out" });
+    res.status(200).json({ message: "Logged out" });
 };
 
 module.exports = {

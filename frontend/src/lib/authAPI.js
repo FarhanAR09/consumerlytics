@@ -7,40 +7,30 @@ export async function login(username, password) {
         credentials: "include",
     });
 
-    // const authed = username === "abc" && password === "123";
-
-    // const res = await mockApiResponse(
-    //     { username: username, password: password },
-    //     authed ? 200 : 400,
-    //     2000
-    // );
+    const json = await res.json();
 
     if (!res.ok) {
-        throw new Error("Login failed");
+        throw new Error("Login failed! " + ((json.error ? json.error : "")));
     }
 
-    return res.json();
+    return json;
 }
 
 export async function logout() {
 
-    await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/logout`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/logout`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
     });
 
-    // const res = await mockApiResponse(
-    //     { message: "Logout successful" },
-    //     200,
-    //     2000
-    // );
+    const json = await res.json();
     
     if (!res.ok) {
-        throw new Error("Logout failed");
+        throw new Error("Logout failed! " + (json.error ? json.error : ""));
     }
 
-    return res.json();
+    return json;
 }
 
 export async function register(username, password){
@@ -51,15 +41,11 @@ export async function register(username, password){
         credentials: "include",
     });
 
-    // const res = await mockApiResponse(
-    //     { username: username, password: password },
-    //     200,
-    //     2000
-    // );
+    const json = await res.json();
 
     if (!res.ok) {
-        throw new Error("Register failed");
+        throw new Error("Register failed! " + (json.error ? json.error : ""));
     }
 
-    return res.json();
+    return json;
 }
