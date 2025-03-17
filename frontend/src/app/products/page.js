@@ -11,7 +11,6 @@ import { getProductAnalysis } from '@/lib/analyzeAPI';
 
 export default function ProductsPage() {
     
-    //TODO: throw user to login page if not logged in
     const router = useRouter();
 
     const [products, setProductsList] = useState([]);
@@ -21,7 +20,6 @@ export default function ProductsPage() {
         try {
             const products = await getProducts();
             setProductsList(products);
-            console.log(products);
         } catch (error) {
             console.error("Failed to fetch products", error);
             alert("Failed to fetch products: " + error);

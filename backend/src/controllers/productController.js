@@ -91,27 +91,45 @@ const createNewProduct = async (req, res) => {
 };
 
 const updateProduct = async (req, res) => {
-
-    try{
-        let {id, updatedProduct} = req.body;
+    try {
+        let { id, updatedProduct } = req.body;
         updatedProduct = { ...updatedProduct, owner: req.user.username };
+
         productSchema.parse(updatedProduct);
-        
-        //await delay(1000);
-        const productIndex = productsMockDB.findIndex(product => product.id === id && req.user.username === product.owner);
-        if (productIndex === -1) {
-            res.status(404).json({ message: "Product not found" });
+
+        const productCheck = await pool.query(
+            `SELECT * FROM public."UserProduct" WHERE "id" = $1 AND "owner" = $2;`,
+            [id, req.user.username]
+        );
+
+        if (productCheck.rows.length === 0) {
+            return res.status(404).json({ error: "Product not found" });
         }
-        else{
-            productsMockDB[productIndex] = { ...productsMockDB[productIndex], ...updatedProduct };
-            res.status(200).json({ message: "Product updated successfully", product: productsMockDB[productIndex] });
+
+        await pool.query(
+            `UPDATE public."UserProduct" 
+            SET "name" = $1, "cost" = $2 
+            WHERE "id" = $3 AND "owner" = $4;`,
+            [updatedProduct.name, updatedProduct.cost, id, req.user.username]
+        );
+
+        const updatedResult = await pool.query(
+            `SELECT * FROM public."UserProduct" WHERE "id" = $1 AND "owner" = $2;`,
+            [id, req.user.username]
+        );
+        if (updatedResult.rows.length === 0) {
+            return res.status(404).json({ error: "Product not found" });
         }
-    }
+
+        res.status(200).json({ 
+            message: "Product updated successfully", 
+            product: updatedResult.rows[0] 
+        });
+    } 
     catch (error) {
         if (error instanceof z.ZodError) {
             res.status(400).json({ errors: error.errors });
-        }
-        else{
+        } else {
             res.status(500).json({ message: error.message });
         }
     }
@@ -119,19 +137,25 @@ const updateProduct = async (req, res) => {
 
 const deleteProduct = async (req, res) => {
     try {
-        //await delay(1000);
-
         const id = req.params.id;
 
-        const productIndex = productsMockDB.findIndex(product => product.id === id && req.user.username === product.owner);
-        if (productIndex === -1) {
-            res.status(404).json({ message: "Product not found" });
+        const productCheck = await pool.query(
+            `SELECT * FROM public."UserProduct" WHERE "id" = $1 AND "owner" = $2;`,
+            [id, req.user.username]
+        );
+
+        if (productCheck.rows.length === 0) {
+            return res.status(404).json({ message: "Product not found" });
         }
-        else{
-            const deletedProduct = productsMockDB.splice(productIndex, 1)[0];
-            res.status(200).json({ message: "Product deleted successfully" });
-        }
-    } catch (error) {
+
+        await pool.query(
+            `DELETE FROM public."UserProduct" WHERE "id" = $1 AND "owner" = $2;`,
+            [id, req.user.username]
+        );
+
+        res.status(200).json({ message: "Product deleted successfully" });
+    } 
+    catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
