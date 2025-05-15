@@ -93,10 +93,28 @@ Pengembangan platform analisis keuangan UMKM berbasis AI untuk memberikan saran 
 ---
 
 ---
+
+# AI Modeling
+
+Model prediktif dalam proyek ini dirancang untuk memahami pola harga produk e-commerce berdasarkan kombinasi data transaksi historis dan tren pencarian publik terhadap produk tersebut. Berikut adalah penjelasan konsepnya:
+
+* **Persiapan dan Pembersihan Data**: Dataset transaksi e-commerce dibaca dan disesuaikan dengan struktur yang konsisten, termasuk pengubahan nama kolom, pembuangan data kosong, dan konversi tanggal ke format yang bisa diolah lebih lanjut. Setiap baris data mencerminkan satu transaksi dan mencakup informasi produk, metode pembayaran, status transaksi, harga, dan tanggal.
+* **Ekstraksi Fitur Waktu**:Tanggal transaksi diuraikan menjadi fitur-fitur temporal seperti tahun, bulan, hari, hari dalam seminggu, dan apakah transaksi terjadi di akhir pekan. Fitur waktu juga direpresentasikan dalam bentuk numerik dan siklikal (menggunakan fungsi sinus dan kosinus) untuk menangkap pola musiman atau mingguan.
+* **Penyandingan Produk dan Tren Google**:Untuk setiap produk tertentu (SKU), dilakukan pencocokan dengan data tren pencarian Google yang relevan. Data ini memberikan indikasi tingkat ketertarikan publik terhadap produk-produk tertentu dalam periode waktu tertentu, dan kemudian dirata-ratakan per bulan.
+* **Penggabungan Data Transaksi dan Tren**:Data tren digabungkan dengan data transaksi berdasarkan SKU, tahun, dan bulan. Hal ini memungkinkan model untuk memahami hubungan antara popularitas suatu produk (berdasarkan tren) dan harga aktualnya di pasar.
+* **Normalisasi dan Deteksi Outlier**:Harga dinormalisasi untuk konsistensi dan diolah lebih lanjut dengan teknik deteksi dan pemangkasan outlier berbasis rentang interkuartil (IQR). Ini membantu memastikan bahwa model tidak terlalu dipengaruhi oleh data yang ekstrem atau anomali.
+* **Transformasi dan Interaksi Fitur**:Fitur baru diturunkan dari data tren dan kategorisasi, seperti log-trend, kuadrat dari tren, interaksi antara tren dan kategori produk, serta perbedaan harga dari waktu ke waktu (misalnya percepatan dan deviasi harga dari rata-rata bergulir).
+* **Kategorisasi dan Encoding**:Kolom seperti metode pembayaran dan status transaksi dikategorikan ulang ke dalam kelompok yang lebih berarti (misalnya, cash_based, credit, success, failure), lalu diubah ke format numerik menggunakan teknik label encoding untuk digunakan dalam proses pembelajaran mesin.
+* **Pembuatan Fitur Historis**:Model juga mempertimbangkan dinamika waktu seperti perubahan harga antar bulan, harga rata-rata sebelumnya, dan arah perubahan harga. Fitur-fitur ini penting untuk menangkap tren historis dalam perilaku konsumen dan harga produk.
+
+---
+
+---
 # Daftar Pustaka
 
 * Sofyan, S. (2017, Juni) PERAN UMKM (USAHA MIKRO, KECIL, DAN MENENGAH) DALAM PEREKONOMIAN INDONESIA. Diakses pada 15 Februari 2025 dari https://jurnal.uindatokarama.ac.id/index.php/blc/article/download/298/216
 * Saprianto, F. (2020, 1 Januari) DILEMATIS UMKM DI ERA DIGITAL. Diakses pada 15 Februari 2025 dari https://media.neliti.com/media/publications/296689-dilematis-umkm-di-era-digital-bb78fa90.pdf
 * Hartono, & Hartomo, D. D. (2014) FAKTOR-FAKTOR YANG MEMPENGARUHI PERKEMBANGAN UMKM DI SURAKARTA. Diakses pada 15 Februari 2025 dari https://jurnal.uns.ac.id/jbm/article/view/2678 
-* Arsenio, D., Abdurrahman, Y., Tania, A. L., Idaman, N. (2024) Peran dan Praktik Artificial Intelligence terhadap UMKM. Diakses pada 15 Februari 2025 dari https://ejournal.sisfokomtek.org/index.php/jumin/article/download/4612/2933/33525 
+* Arsenio, D., Abdurrahman, Y., Tania, A. L., Idaman, N. (2024) Peran dan Praktik Artificial Intelligence terhadap UMKM. Diakses pada 15 Februari 2025 dari https://ejournal.sisfokomtek.org/index.php/jumin/article/download/4612/2933/33525
+* Marco Lagi, Yavni Bar-Yam, Karla Z. Bertrand, and Yaneer Bar-Yam (2015) Accurate market price formation model with both supply-demand and trend-following for global food prices providing policy recommendations. Diakses pada 13 Mei 2025 dari Accurate market price formation model with both supply-demand and trend-following for global food prices providing policy recommendations dari https://www.pnas.org/doi/10.1073/pnas.1413108112
 ---
