@@ -16,7 +16,7 @@ export default function RegisterPage() {
     const [isLoading, setIsLoading] = useState(false);
 
     async function handleRegister(username, password, confirmPassword){
-
+        //a
         setIsLoading(true);
         try {
             console.log(username, password, confirmPassword);
