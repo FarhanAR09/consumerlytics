@@ -89,6 +89,14 @@ Pengembangan platform analisis keuangan UMKM berbasis AI untuk memberikan saran 
 # Cloud Architecture
 
 <img src="assets/cloudArchitecture.png"/>
+![image](https://github.com/user-attachments/assets/cd5909cc-d7c6-419d-9001-2b5f9b849335)
+
+Diagram tersebut menunjukkan integrasi architecture layer semua komponen Consumerlytics.
+
+* **Frontend**: Frontend menggunakan Azure App Service F1 Plan untuk mendukung aplikasi Next JS.
+* **Backend**: Backend menggunakan Azure App Service F1 Plan untuk mendukung aplikasi Express JS. Backend hanya bisa diakses dari IP Address frontend untuk keamanan data dan abstraksi business logic. Tujuan utama backend adalah abstraksi business logic. Artinya data hanya dapat diubah dengan logika tertentu sehingga tidak ada manipulasi data mengurangi integritas data. Backend ini bisa melakukan register, login, logout, CRUD produk, dan mengakses AI.
+* **Database**: Database menggunakan Azure Database for Flexible PostgreSQL. Database menyimpan data pengguna, produk, dan tren produk.
+* **Model AI**: Model AI menggunakan Vertex AI untuk mendukung model Scikit Learn.
 
 ---
 
@@ -106,6 +114,30 @@ Model prediktif dalam proyek ini dirancang untuk memahami pola harga produk e-co
 * **Transformasi dan Interaksi Fitur**:Fitur baru diturunkan dari data tren dan kategorisasi, seperti log-trend, kuadrat dari tren, interaksi antara tren dan kategori produk, serta perbedaan harga dari waktu ke waktu (misalnya percepatan dan deviasi harga dari rata-rata bergulir).
 * **Kategorisasi dan Encoding**:Kolom seperti metode pembayaran dan status transaksi dikategorikan ulang ke dalam kelompok yang lebih berarti (misalnya, cash_based, credit, success, failure), lalu diubah ke format numerik menggunakan teknik label encoding untuk digunakan dalam proses pembelajaran mesin.
 * **Pembuatan Fitur Historis**:Model juga mempertimbangkan dinamika waktu seperti perubahan harga antar bulan, harga rata-rata sebelumnya, dan arah perubahan harga. Fitur-fitur ini penting untuk menangkap tren historis dalam perilaku konsumen dan harga produk.
+
+---
+
+---
+
+# Jaringan Komputer
+
+Terdapat beberapa komponen cloud yang saling berkomunikasi pada Consumerlytics, yaitu frontend, backend, database, dan AI model. Komponen-komponen tersebut saling berkomunikasi dengan topologi dan protokol komunikasi tertentu.
+
+* **Frontend**: Frontend harus bisa diakses oleh pengguna dari mana saja, maka digunakan website dengan protokol HTTP seperti pada umumnya yang digunakan website.
+* **Frontend-Backend**: Backend diakses oleh frontend dengan protokol HTTP untuk bertukar paket informasi. Demi keamanan, backend hanya mengizinkan IP address frontend untuk mengakses endpoint.
+* **Backend-Database**: Database diakses oleh backend dengan protokol TCP untuk bertukar data dengan volume besar secara reliable.
+* **Backend-AI Model**: Model AI diakses oleh backend dengan protokol HTTP untuk bertukar paket informasi seperti REST API pada umumnya.
+
+---
+
+# Cloud Computing
+
+Semua komponen pada Consumerlytics (frontend, backend, database, dan model AI) di-deploy dalam cloud. Ini bertujuan untuk meningkatkan accessibility Consumerlytics agar dapat diakses kapan saja, availability untuk mengurangi down time akibat development atau musibah, dan scalability untuk memberikan ruang upgrade yang fleksibel.
+
+* **Frontend**: Frontend dideploy ke Azure App Service. Ini bertujuan untuk akses melalui browser yang mudah,
+* **Backend**: Backend juga dideploy ke Azure App Service. Ini bertujuan untuk availability service dan keamanan akses data hanya melalui frontend.
+* **Database**: Database dideploy ke Azure Database for PostgreSQL. Ini bertujuan untuk availability service.
+* **Model AI**: Model AI dideploy ke Vertex AI. Ini bertujuan untuk accessibility komputasi intensif pada cloud.
 
 ---
 
