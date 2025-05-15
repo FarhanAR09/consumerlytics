@@ -6,12 +6,11 @@ import ProductCard from '@/components/cards/productCard';
 import { useState, useEffect } from 'react';
 import { logout } from '@/lib/authAPI';
 import Spinner from '@/components/spinner';
-import { getProducts } from '@/lib/productAPI';
+import { getProductByID, getProducts } from '@/lib/productAPI';
 import { getProductAnalysis } from '@/lib/analyzeAPI';
 
 export default function ProductsPage() {
     
-    //TODO: throw user to login page if not logged in
     const router = useRouter();
 
     const [products, setProductsList] = useState([]);
@@ -21,7 +20,6 @@ export default function ProductsPage() {
         try {
             const products = await getProducts();
             setProductsList(products);
-            console.log(products);
         } catch (error) {
             console.error("Failed to fetch products", error);
             alert("Failed to fetch products: " + error);
@@ -46,13 +44,13 @@ export default function ProductsPage() {
     const [fullAnalysisPopupActive, setFullAnalysisPopupActive] = useState(false);
 
     const handleProductUpdated = (updatedProduct, oldID = undefined) => {
-        //New product
+        //Not updating id
         if (oldID == undefined){
             setProductsList((prevProducts) =>
                 prevProducts.map((p) => (p.id === updatedProduct.id ? updatedProduct : p))
             );
         }
-        //Existing product
+        //Updating id (empty string means saving new product)
         else {
             setProductsList((prevProducts) =>
                 prevProducts
@@ -86,10 +84,11 @@ export default function ProductsPage() {
         try{
             setAnalysisPopupActive(true)
             const result = await getProductAnalysis(product);
-            setAnalysis(result.message);;
+            setAnalysis(result.analysis);
         }
         catch(e){
             alert(e);
+            setAnalysisPopupActive(false);
         }
         finally{
             setIsLoadingAnalysis(false);
@@ -142,7 +141,7 @@ export default function ProductsPage() {
                             initState={isIDEmpty(product) ? "new" : "show"}
                             onProductSaved={handleProductUpdated}
                             onProductDeleted={handleProductDeleted}
-                            onAnalyzeProduct={openAnalysisPopup} //TODO: setup brief analysis
+                            onAnalyzeProduct={openAnalysisPopup}
                         ></ProductCard>
                     ))
                 }

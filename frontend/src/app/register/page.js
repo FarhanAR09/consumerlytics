@@ -16,7 +16,7 @@ export default function RegisterPage() {
     const [isLoading, setIsLoading] = useState(false);
 
     async function handleRegister(username, password, confirmPassword){
-
+        //a
         setIsLoading(true);
         try {
             console.log(username, password, confirmPassword);
@@ -24,7 +24,7 @@ export default function RegisterPage() {
                 throw new Error("Password and confirm password do not match");
             }
 
-            await register(username, password, confirmPassword);
+            await register(username, password);
             router.push("/products");
         }
         catch (e) {

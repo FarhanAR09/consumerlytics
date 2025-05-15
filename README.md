@@ -2,6 +2,8 @@
 
 Analyze your Market!
 
+[Consumerlytics Website](https://consumerlytics.azurewebsites.net/)
+
 [Consumerlytics GitHub Pages](https://farhanar09.github.io/consumerlytics/)
 
 ### Kelompok Info Cuan
